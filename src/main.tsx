@@ -7,6 +7,7 @@ import "./index.css";
 
 const domain = import.meta.env.VITE_AUTH0_DOMAIN;
 const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
+const audience = import.meta.env.VITE_AUTH0_AUDIENCE;
 
 // Validate Auth0 configuration
 if (!domain || !clientId) {
@@ -14,6 +15,7 @@ if (!domain || !clientId) {
   console.error("Required environment variables:");
   console.error("- VITE_AUTH0_DOMAIN");
   console.error("- VITE_AUTH0_CLIENT_ID");
+  console.error("- VITE_AUTH0_AUDIENCE");
   throw new Error("Auth0 domain and client ID must be set in .env file");
 }
 
@@ -34,8 +36,8 @@ createRoot(rootElement).render(
       clientId={clientId}
       authorizationParams={{
         redirect_uri: window.location.origin,
-        audience: `https://${domain}/api/v2/`,  // ← Add this
-        scope: 'openid profile email offline_access update:current_user_metadata'  // ← Add this
+        audience: audience,  // ← Add this
+        scope: 'openid profile email offline_access',  // ← Add this
       }}
       cacheLocation="localstorage"
       useRefreshTokens={true}
