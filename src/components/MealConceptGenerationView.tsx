@@ -8,7 +8,7 @@
  * 4. Move to Phase 2 with approved concepts
  */
 
-import { useState } from 'react';
+import { useState , useEffect  } from 'react';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Input } from './ui/input';
@@ -34,8 +34,8 @@ export function MealConceptGenerationView() {
   const [showResults, setShowResults] = useState(false);
 
   // Queries & Mutations
-  const { data: pendingConcepts, isLoading: loadingConcepts } = useMealConcepts('pending');
-  const { data: approvedConcepts } = useMealConcepts('approved');
+  const { data: pendingConcepts, isLoading: loadingConcepts, refetch: refetchPending } = useMealConcepts('pending');
+  const { data: approvedConcepts, refetch: refetchApproved } = useMealConcepts('approved');
   const generateMutation = useGenerateMealConcepts();
   const approveMutation = useApproveMealConcept();
   const rejectMutation = useRejectMealConcept();
@@ -58,6 +58,23 @@ export function MealConceptGenerationView() {
     if (cost === '$$') return 'text-yellow-600';
     return 'text-red-600';
   };
+
+  useEffect(() => {
+    console.log('🔄 MealConceptGenerationView mounted, checking for data...');
+    const token = localStorage.getItem('auth_token');
+    
+    if (token) {
+      console.log('✅ Token exists, forcing refetch...');
+      // Small delay to ensure token is fully set
+      setTimeout(() => {
+        refetchPending();
+        refetchApproved();
+        console.log('🔄 Refetch triggered');
+      }, 500);
+    } else {
+      console.log('❌ No token yet');
+    }
+  }, [refetchPending, refetchApproved]);
 
   return (
     <div className="space-y-6 p-6">

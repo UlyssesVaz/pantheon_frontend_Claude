@@ -18,8 +18,12 @@ import { toast } from 'sonner';
 export function useMealConcepts(status: 'pending' | 'approved' | 'rejected' = 'pending') {
   return useQuery({
     queryKey: ['mealConcepts', status],
-    queryFn: () => apiClient.getMealConcepts(status),
-    staleTime: 2 * 60 * 1000, // 2 minutes
+    queryFn: () => {
+      console.log('🔵 API Call: Fetching meal concepts with status:', status);
+      return apiClient.getMealConcepts(status);
+    },
+    staleTime: 2 * 60 * 1000,
+    retry: 1,
   });
 }
 
